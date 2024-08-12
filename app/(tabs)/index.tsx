@@ -1,10 +1,13 @@
-import { Image, StyleSheet, Platform, Dimensions, View, FlatList } from 'react-native';
+import { Image, StyleSheet, Platform, Dimensions, View, FlatList, RefreshControl } from 'react-native';
 
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import Card from '@/components/Card';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { getAllCocktails } from "../../lib/appwrite";
+import useAppwrite from "../../lib/useAppwrite";
+import { useState } from 'react';
 
 interface CardData {
   id: string;
@@ -36,6 +39,15 @@ const data: CardData[] = [
 ];
 
 export default function HomeScreen() {
+
+  const { data: posts, refetch } = useAppwrite(getAllCocktails);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   return (
     <ParallaxScrollView
